@@ -629,7 +629,20 @@ function _formatToolOutput(params: {
   artifact?: unknown;
   toolCallId?: string;
 }): ToolReturnType {
-  const { content, artifact, toolCallId } = params;
+  // workaround https://community.openai.com/t/gpt4-o-support-for-image-urls-as-tool-responses/907546
+  let { content, artifact, toolCallId } = params;
+  if (typeof content === "string") {
+    content = "<TOOL RESPONSE>\n" + content + "\n</TOOL RESPONSE>";
+  } else if (
+    Array.isArray(content) &&
+    content.every((item) => typeof item === "object")
+  ) {
+    content = [
+      [{ type: "text", text: "<TOOL RESPONSE>\n" }],
+      content,
+      [{ type: "text", text: "\n</TOOL RESPONSE>" }],
+    ].flat();
+  }
   if (toolCallId) {
     if (
       typeof content === "string" ||

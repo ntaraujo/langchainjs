@@ -127,7 +127,7 @@ export function messageToOpenAIRole(message: BaseMessage): OpenAIRoleEnum {
     case "function":
       return "function";
     case "tool":
-      return "tool";
+      return "user"; // workaround https://community.openai.com/t/gpt4-o-support-for-image-urls-as-tool-responses/907546
     case "generic": {
       if (!ChatMessage.isInstance(message))
         throw new Error("Invalid generic chat message");
